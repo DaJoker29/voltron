@@ -101,9 +101,11 @@ mongoose.connection.on('connected', () => {
 
   app.locals.moment = moment;
   app.locals.numeral = numeral;
+  app.locals.pkg = pkg;
 
   // TODO: Configure TOTP Strategy for Passport
   // TODO: Load express routes
+  app.use(require('@volt/app/core/auth/routes'));
 
   /**
    * Launch Server

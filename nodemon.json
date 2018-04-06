@@ -4,9 +4,9 @@
     "NODE_ENV": "development"
   },
   "ext": "js json",
+  "ignore": ["lib/scripts/**/*"],
   "watch": [
-    "src/server/**/*",
-    "src/client/views",
+    "lib/**/*.js",
     "index.js",
     ".env"
   ]
