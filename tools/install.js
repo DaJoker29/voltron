@@ -6,7 +6,7 @@ const symlinks = [
   ['../../tools/pre-commit.sh', '.git/hooks/pre-commit'],
 ];
 
-console.log(`Creating ${symlinks.count} symlinks...`);
+console.log(`Creating ${symlinks.length} symlinks...`);
 
 symlinks.forEach(([target, path]) => {
   if (fs.existsSync(path)) {
