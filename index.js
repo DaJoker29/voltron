@@ -6,6 +6,7 @@ const env = dotenv.config();
 // TODO: Run in a cluster.
 // TODO: Add CSRF module (csurf) to secure form submissions
 // TODO: Add serve-favicon like the cool kids do.
+
 const express = require('express');
 const mongoose = require('mongoose');
 const morganDebug = require('morgan-debug');
@@ -21,14 +22,14 @@ const VError = require('verror');
 
 const debug = require('debug')('voltron:init');
 const envDebug = require('debug')('voltron:env');
-// const routeDebug = require('debug')('voltron:routes');
+const routeDebug = require('debug')('voltron:routes');
 const dbDebug = require('debug')('voltron:database');
 
 // TODO: Import Custom TOTP Strategy from Caster
 
-/**
- * Check for envirnment variables
- */
+////////////////////////////////////
+// Check for envirnment variables //
+////////////////////////////////////
 
 if (env.error) {
   console.error(
@@ -41,9 +42,9 @@ if (env.error) {
   });
 }
 
-/**
- * Variables and Constants
- */
+/////////////////////////////
+// Variables and Constants //
+/////////////////////////////
 
 const app = express();
 
@@ -56,9 +57,9 @@ const db =
   process.env.DB ||
   `mongodb://localhost/${isProduction ? 'test_' : ''}${pkg.name}`;
 
-/**
- * Database Connection Handlers
- */
+//////////////////////////////////
+// Database Connection Handlers //
+//////////////////////////////////
 
 mongoose.connection.on('error', err => {
   if (err) throw new VError(err, 'Problem connecting to database.');
@@ -81,9 +82,9 @@ mongoose.connection.on('connected', () => {
     }),
   };
 
-  /**
-   * Express/Passport Configuration
-   */
+  ////////////////////////////////////
+  // Express/Passport Configuration //
+  ////////////////////////////////////
 
   app.set('view engine', 'pug');
   app.set('views', path.join(__dirname, 'lib/views'));
@@ -104,12 +105,18 @@ mongoose.connection.on('connected', () => {
   app.locals.pkg = pkg;
 
   // TODO: Configure TOTP Strategy for Passport
-  // TODO: Load express routes
-  app.use(require('@volt/app/core/auth/routes'));
 
-  /**
-   * Launch Server
-   */
+  /////////////////
+  // Load Routes //
+  /////////////////
+  loadRoutes().forEach(route => {
+    routeDebug(`Route Loaded: ${route[0]}`);
+    app.use(route[1]);
+  });
+
+  ///////////////////
+  // Launch Server //
+  ///////////////////
 
   app.listen(port, err => {
     if (err) throw new VError(err, 'Problem launching express server');
@@ -119,16 +126,16 @@ mongoose.connection.on('connected', () => {
   });
 });
 
-/**
- * Connect to database
- */
+/////////////////////////
+// Connect to database //
+/////////////////////////
 
 dbDebug(`Connecting to database: ${db}`);
 mongoose.connect(db);
 
-/**
- * Termination and Exit handling
- */
+///////////////////////////////////
+// Termination and Exit handling //
+///////////////////////////////////
 
 process.on('SIGINT', gracefulExit);
 process.on('SIGTERM', gracefulExit);
@@ -137,6 +144,20 @@ process.on('uncaughtException', err => {
   debug(`${pkg.name.toUpperCase()} has CRASHED in a whirl of fire...`);
   gracefulExit();
 });
+
+//////////////////////
+// Helper Functions //
+//////////////////////
+
+function loadRoutes() {
+  const loaded = [['auth', require('@volt/app/auth/routes')]];
+
+  // TODO: Add Error routes
+  // TODO: Cycle through routes directory and loaded all active routes
+  // with the filename as the route prefix
+
+  return loaded;
+}
 
 function gracefulExit() {
   debug(`${pkg.name.toUpperCase()} is settling DOWN`);
@@ -165,7 +186,9 @@ function gracefulExit() {
   I'll form the head
   I'll form the head
   I'll form the head
+  
  
-  -MC Frontalot
-
  */
+///////////////////
+// -MC Frontalot //
+///////////////////
