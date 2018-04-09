@@ -1,0 +1,12 @@
+html
+  head
+    title #{pkg.name} - #{pkg.description}
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="theme-color" content="#111111")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Amatic+SC")
+    link(rel="stylesheet", href="/assets/style.css")
+  body
+    h2 
+      a(href="/") #{pkg.name}
+    block content
+footer Crafted by Zero Daedalus &copy; 2018
